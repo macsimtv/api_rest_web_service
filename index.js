@@ -10,11 +10,16 @@ const app = express();
 
 const logger = winston.createLogger({
     level: 'info',
-    format: winston.format.json(),
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        winston.format.json()
+    ),
     defaultMeta: { service: 'user-service' },
     transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' }),
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/combined.log' }),
     ],
 });
 
@@ -27,16 +32,15 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(cors('*'));
 
 app.get("/api", (req, res) => {
-    logger.log({
-        level: 'info',
-        message: 'Hello distributed log files!'
-    });
-
     logger.info('Hello again distributed logs');
     res.json({ message: "Hello from server!" });
 });
 
+app.get('*', (req, res) => {
+    logger.error('Not found');
+    res.status(404).json({ message: 'Not found...' });
+});
 
 app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
+    console.log(`✅ http://localhost:${PORT}`);
 });
