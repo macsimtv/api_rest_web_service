@@ -4,7 +4,7 @@ const fs = require('fs');
 const winston = require('winston');
 const {error} = require("winston");
 
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -24,18 +24,16 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 }
 
-
-app.use(cors({origin: 'http://localhost:3000'}));
-
+app.use(cors('*'));
 
 app.get("/api", (req, res) => {
     logger.log({
         level: 'info',
-        message: 'aller hop c est fini !'
+        message: 'Hello distributed log files!'
     });
 
     logger.info('Hello again distributed logs');
-    res.json({ message: "Cadeau de Florian !" });
+    res.json({ message: "Hello from server!" });
 });
 
 
